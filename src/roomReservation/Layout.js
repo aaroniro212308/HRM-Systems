@@ -1,137 +1,136 @@
 // Layout.js
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { styled } from '@mui/system';
-import HomeIcon from '@mui/icons-material/Home';
-import BookIcon from '@mui/icons-material/Book';
-import UpdateIcon from '@mui/icons-material/Update';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import EditIcon from '@mui/icons-material/Edit';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import  { useState } from 'react';
-// Add custom CSS if needed
-import { ListItemButton } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import BookIcon from '@mui/icons-material/Book';
+import RoomIcon from '@mui/icons-material/Room';
+import CreateIcon from '@mui/icons-material/Create';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import UpdateIcon from '@mui/icons-material/Update';
 
-const drawerWidth = '240px' ;
+const drawerWidth = '300px';
 
 const StyledLink = styled(Link)({
   textDecoration: 'none',
   color: 'inherit',
+  display: 'flex',
+  alignItems: 'center',
+  padding: '10px',
+  transition: 'background-color 0.3s ease',
+  '&:hover': {
+    backgroundColor: '#003366', // Darker shade for hover effect
+  },
 });
 
 const Layout = () => {
-    const [bookingMenuOpen, setBookingMenuOpen] = useState(false);
-    const [userMenuOpen, setuserMenuOpen] = useState(false);
-  const drawerStyle = {
-    width: drawerWidth,
-    flexShrink: 0,
-  };
-
-   const drawerPaperStyle = {
-    width: drawerWidth,
-    backgroundColor: '#001f3f', // Dark blue background color
-    color: 'white', // White text color
-  };
-
+  const [bookingMenuOpen, setBookingMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [activeSubMenu, setActiveSubMenu] = useState(null);
   const mainContentStyle = {
     flex: 1,
     padding: '20px',
-    
   };
- 
 
+  const sidebarStyle = {
+    width: drawerWidth,
+    flexShrink: 0,
+    backgroundColor: '#001f3f', // Dark blue background color
+    color: 'white', // White text color
+    transition: 'width 0.3s ease',
+    overflowX: 'hidden',
+  };
+
+  const submenuStyle = {
+    paddingLeft: '20px',
+  };
+  const handleSubMenuClick = (menuType) => {
+    if (menuType === 'booking') {
+      setBookingMenuOpen(!bookingMenuOpen);
+      setActiveSubMenu(bookingMenuOpen ? null : 'booking');
+    } else if (menuType === 'user') {
+      setUserMenuOpen(!userMenuOpen);
+      setActiveSubMenu(userMenuOpen ? null : 'user');
+    }
+  };
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* Sidebar */}
-      <Drawer
-        style={drawerStyle}
-        variant="permanent"
-        classes={{
-          paper: drawerPaperStyle,
-        }}
-        anchor="left"
-      >
-        <List>
+      {/* New Sidebar */}
+      <div style={sidebarStyle}>
+        <ul style={{ listStyle: 'none' }}>
           {/* Home */}
-          <ListItem component={StyledLink} to="/">
-            <ListItemIcon>
-              <HomeIcon />
-            </ListItemIcon>
-            <ListItemText primary="Home" />
-          </ListItem>
+          <li className="list-group-item">
+            <StyledLink to="/" style={{ marginTop: '50px', fontSize: '30px' }}>
+              <HomeIcon style={{ fontSize: '30px' }} /> Home
+            </StyledLink>
+          </li>
 
           {/* Booking Submenu */}
-        {/* Booking Submenu */}
-        <ListItemButton  onClick={() => setBookingMenuOpen(!bookingMenuOpen)}>
-            <ListItemIcon>
-              <BookIcon />
-            </ListItemIcon>
-            <ListItemText primary="Booking" />
-          </ListItemButton >
-          {bookingMenuOpen && (
-          <List component="div" disablePadding>
-            <ListItem button component={StyledLink} to="/room-booking">
-              <ListItemIcon>
-                <AddBoxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Room Booking" />
-            </ListItem>
-            <ListItem button component={StyledLink} to="/create-booking">
-              <ListItemIcon>
-                <AddBoxIcon />
-              </ListItemIcon>
-              <ListItemText primary="Create Booking" />
-            </ListItem>
-            <ListItem button component={StyledLink} to="/view-booking-details">
-              <ListItemIcon>
-                <VisibilityIcon />
-              </ListItemIcon>
-              <ListItemText primary="View Booking Details" />
-            </ListItem>
-            <ListItem button component={StyledLink} to="/modify-booking">
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary="Update Booking" />
-            </ListItem>
-          </List>
+          <li
+            className={`list-group-item ${activeSubMenu === 'booking' ? 'active' : ''}`}
+            onClick={() => handleSubMenuClick('booking')}
+          >
+            <StyledLink style={{ marginTop: '20px', fontSize: '25px' }}>
+              <BookIcon style={{ fontSize: '25px' }} /> Booking
+            </StyledLink>
+            {bookingMenuOpen && (
+              <ul style={submenuStyle}>
+                <li className="list-group-item">
+                  <StyledLink to="/room-booking">
+                    <RoomIcon /> Room Booking
+                  </StyledLink>
+                </li>
+                <li className="list-group-item">
+                  <StyledLink to="/create-booking">
+                    <CreateIcon /> Create Booking
+                  </StyledLink>
+                </li>
+                <li className="list-group-item">
+                  <StyledLink to="/view-booking-details">
+                    <VisibilityIcon /> View Booking Details
+                  </StyledLink>
+                </li>
+                <li className="list-group-item">
+                  <StyledLink to="/modify-booking">
+                    <UpdateIcon /> Update Booking
+                  </StyledLink>
+                </li>
+              </ul>
             )}
+          </li>
+
           {/* User Submenu */}
- 
-           {/* User Submenu */}
-           <ListItem button onClick={() => setuserMenuOpen(!userMenuOpen)}>
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText primary="User" />
-          </ListItem>
-          {userMenuOpen && (
-          <List component="div" disablePadding>
-            <ListItem button component={StyledLink} to="/user-profile">
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary="User Profile" />
-            </ListItem>
-            <ListItem button component={StyledLink} to="/registration-form">
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Create Profile" />
-            </ListItem>
-            <ListItem button component={StyledLink} to="/update-profile">
-              <ListItemIcon>
-                <UpdateIcon />
-              </ListItemIcon>
-              <ListItemText primary="Update Profile" />
-            </ListItem>
-          </List>
-          )}
-        </List>
-      </Drawer>
+          <li
+            className={`list-group-item ${activeSubMenu === 'user' ? 'active' : ''}`}
+            onClick={() => handleSubMenuClick('user')}
+          >
+            <StyledLink style={{ marginTop: '20px', fontSize: '30px' }}>
+              <AccountCircleIcon style={{ fontSize: '30px' }} /> User
+            </StyledLink>
+            {userMenuOpen && (
+             <ul style={submenuStyle}>
+             <li className="list-group-item">
+               <StyledLink to="/user-profile">
+                 <AccountCircleIcon /> User Profile
+               </StyledLink>
+             </li>
+             <li className="list-group-item">
+               <StyledLink to="/registration-form">
+                 <CreateIcon /> Create Profile
+               </StyledLink>
+             </li>
+             <li className="list-group-item">
+               <StyledLink to="/update-profile">
+                 <UpdateIcon /> Update Profile
+               </StyledLink>
+             </li>
+           </ul>
+            )}
+          </li>
+        </ul>
+      </div>
 
       {/* Main Content */}
       <div style={mainContentStyle}>
